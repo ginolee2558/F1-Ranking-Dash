@@ -8,7 +8,7 @@ from database_setup import Base, Race, Result, Driver
 
 TEAM_COLORS = {
     "McLaren": "orange",
-    "Red Bull Racing": "#000093", # 或者 "navy"
+    "Red Bull": "#000093", # 或者 "navy"
     "Mercedes": "cyan",  # 或者 "lightblue"
     # 您可以加入其他車隊的顏色，如果需要的話：
     # "Ferrari": "red",
@@ -74,25 +74,22 @@ server = app.server
 
 # --- 3. 建立儀表板佈局 ---
 
+# app.py 檔案中
+
 def create_ranking_figure(df):
-    """根據 DataFrame 創建排名圖表"""
-    # 創建條形圖，X 軸是積分，Y 軸是車手，顏色用車隊區分
     fig = px.bar(
         df,
-        x='Driver',
-        y='Total_Points',
+        x='Total_Points', # <--- 修正：X 軸改為分數
+        y='Driver',       # <--- 修正：Y 軸改為車手名稱
         text='Total_Points',
         title='**車手總積分排名 (Driver Standings)**',
-        color='Team', # <--- 關鍵：根據 Team 欄位設定顏色
-        color_discrete_map=TEAM_COLORS, # <--- 新增：應用顏色映射表
-        height=400
+        color='Team',
+        color_discrete_map=TEAM_COLORS,
+        height=600 # 橫條圖通常需要更高的圖表才能看清所有車手
     )
-    
-    # 調整圖表樣式
-    fig.update_layout(yaxis={'categoryorder':'total ascending'})
-    fig.update_traces(texttemplate='%{x}', textposition='outside')
-    fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
-    
+    # 保持其他更新不變
+    fig.update_traces(texttemplate='%{text}', textposition='outside')
+    fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide', title_font_size=20, yaxis={'categoryorder': 'total ascending'}) # 新增 yaxis 設定，讓排名由上而下
     return fig
 
 # ----------------------------------------------------
@@ -126,19 +123,22 @@ def get_team_standings():
 # ----------------------------------------------------
 # 6. 繪製車隊總積分排名圖表
 # ----------------------------------------------------
+# app.py 檔案中
+
 def create_team_ranking_figure(df_team_standings):
     fig = px.bar(
         df_team_standings,
-        x='Team',
-        y='Total_Points',
+        x='Total_Points', # <--- 修正：X 軸改為分數
+        y='Team',         # <--- 修正：Y 軸改為車隊名稱
         text='Total_Points',
         title='**車隊總積分排名 (Team Standings)**',
-        color='Team', # <--- 關鍵：根據 Team 欄位設定顏色
-        color_discrete_map=TEAM_COLORS, # <--- 新增：應用顏色映射表
+        color='Team',
+        color_discrete_map=TEAM_COLORS,
         height=400
     )
+    # 保持其他更新不變
     fig.update_traces(texttemplate='%{text}', textposition='outside')
-    fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide', title_font_size=20)
+    fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide', title_font_size=20, yaxis={'categoryorder': 'total ascending'}) # 新增 yaxis 設定，讓排名由上而下
     return fig
 # ... (省略 ranking_fig = create_ranking_figure(df_standings) 上方的程式碼)
 # --- A. 數據準備和圖表/表格創建 ---

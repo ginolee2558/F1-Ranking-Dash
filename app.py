@@ -178,7 +178,7 @@ race_data = [
     ]},
 
     # ---- 站點 2：沙烏地阿拉伯衝刺賽 ----
-    {'name': '沙烏地阿拉伯衝刺賽', 'type': 'Sprint', 'date': date(2025, 3, 15), # 假設日期
+    {'name': '沙烏地阿拉伯衝刺賽', 'type': 'Sprint', 'date': date(2025, 3, 15), 
      'results': [
         {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 8, 'position': 1},
         {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 7, 'position': 2},
@@ -189,7 +189,7 @@ race_data = [
     ]},
     
     # ---- 站點 2：沙烏地阿拉伯正賽 ----
-    {'name': '沙烏地阿拉伯正賽', 'type': 'Race', 'date': date(2025, 3, 16), # 假設日期
+    {'name': '沙烏地阿拉伯正賽', 'type': 'Race', 'date': date(2025, 3, 16), 
      'results': [
         {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 25, 'position': 1},
         {'driver_name': 'RUUR', 'team': 'Mercedes', 'points': 18, 'position': 2},
@@ -197,6 +197,28 @@ race_data = [
         {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 12, 'position': 4},
         {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 0, 'position': 9},
         {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 0, 'position': 10},
+    ]},
+
+    # ---- 站點 3：伊莫拉衝刺賽 ----
+    {'name': '伊莫拉衝刺賽', 'type': 'Sprint', 'date': date(2025, 4, 19), 
+     'results': [
+        {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 8, 'position': 1},
+        {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 7, 'position': 2},
+        {'driver_name': 'henrythanks69', 'team': 'McLaren', 'points': 6, 'position': 3},
+        {'driver_name': 'RUUR', 'team': 'Mercedes', 'points': 2, 'position': 7},
+        {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 0, 'position': 9},
+        {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 0, 'position': 10}, 
+    ]},
+
+    # ---- 站點 3：伊莫拉正賽 ----
+    {'name': '伊莫拉正賽', 'type': 'Race', 'date': date(2025, 4, 20), 
+     'results': [
+        {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 25, 'position': 1},
+        {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 18, 'position': 2},
+        {'driver_name': 'RUUR', 'team': 'Mercedes', 'points': 15, 'position': 3},
+        {'driver_name': 'henrythanks69', 'team': 'McLaren', 'points': 12, 'position': 4},
+        {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 2, 'position': 9},
+        {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 1, 'position': 10},
     ]}
 ]
 

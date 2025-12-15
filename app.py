@@ -6,6 +6,16 @@ import pandas as pd
 import plotly.express as px
 from database_setup import Base, Race, Result, Driver
 
+TEAM_COLORS = {
+    "McLaren": "orange",
+    "Red Bull Racing": "darkblue", # 或者 "navy"
+    "Mercedes": "cyan",  # 或者 "lightblue"
+    # 您可以加入其他車隊的顏色，如果需要的話：
+    # "Ferrari": "red",
+    # "Aston Martin": "darkgreen",
+    # "Alpine": "blue",
+    # ...
+}
 # --- 1. 資料庫連線與查詢 ---
 engine = create_engine('sqlite:///f1_records.db')
 Base.metadata.bind = engine
@@ -67,12 +77,16 @@ server = app.server
 def create_ranking_figure(df):
     """根據 DataFrame 創建排名圖表"""
     # 創建條形圖，X 軸是積分，Y 軸是車手，顏色用車隊區分
-    fig = px.bar(df, x='Total_Points', y='Driver', orientation='h',
-                 color='Team', 
-                 title='F1 總積分排名',
-                 # 設置圖表的順序，排名第一在最上面
-                 category_orders={"Driver": df['Driver'].tolist()[::-1]} 
-                )
+    fig = px.bar(
+        df,
+        x='Driver',
+        y='Total_Points',
+        text='Total_Points',
+        title='**車手總積分排名 (Driver Standings)**',
+        color='Team', # <--- 關鍵：根據 Team 欄位設定顏色
+        color_discrete_map=TEAM_COLORS, # <--- 新增：應用顏色映射表
+        height=400
+    )
     
     # 調整圖表樣式
     fig.update_layout(yaxis={'categoryorder':'total ascending'})
@@ -119,7 +133,8 @@ def create_team_ranking_figure(df_team_standings):
         y='Total_Points',
         text='Total_Points',
         title='**車隊總積分排名 (Team Standings)**',
-        color='Team',
+        color='Team', # <--- 關鍵：根據 Team 欄位設定顏色
+        color_discrete_map=TEAM_COLORS, # <--- 新增：應用顏色映射表
         height=400
     )
     fig.update_traces(texttemplate='%{text}', textposition='outside')

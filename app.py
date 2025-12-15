@@ -8,7 +8,7 @@ from database_setup import Base, Race, Result, Driver
 
 TEAM_COLORS = {
     "McLaren": "orange",
-    "Red Bull Racing": "darkblue", # 或者 "navy"
+    "Red Bull Racing": "#000093", # 或者 "navy"
     "Mercedes": "cyan",  # 或者 "lightblue"
     # 您可以加入其他車隊的顏色，如果需要的話：
     # "Ferrari": "red",

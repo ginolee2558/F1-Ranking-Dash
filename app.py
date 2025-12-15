@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 import pandas as pd
 import plotly.express as px
-from database_setup import Base, Driver, Race, Result # 匯入表格定義
+from database_setup import Base, Race, Result, Driver
 
 # --- 1. 資料庫連線與查詢 ---
 engine = create_engine('sqlite:///f1_records.db')
@@ -81,10 +81,62 @@ def create_ranking_figure(df):
     
     return fig
 
+# ----------------------------------------------------
+# 5. 獲取車隊總積分
+# ----------------------------------------------------
+# app.py 檔案中
+
+# 確保在 app.py 頂部匯入 Driver 模型
+
+
+def get_team_standings():
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    # 計算每個車隊的總積分
+    # *** 這裡使用 JOIN 來連接 Result 和 Driver，並使用 Driver.team ***
+    team_points = session.query(
+        Driver.team.label('Team'), # <--- 修正：使用 Driver 模型中的 team 欄位
+        func.sum(Result.points).label('Total_Points')
+    )\
+    .join(Driver, Result.driver_id == Driver.driver_id)   \
+    .group_by(Driver.team) \
+    .order_by(func.sum(Result.points).desc()).all()
+    
+    session.close()
+    
+    # 轉換為 DataFrame
+    df_team_standings = pd.DataFrame(team_points, columns=['Team', 'Total_Points'])
+    return df_team_standings
+
+# ----------------------------------------------------
+# 6. 繪製車隊總積分排名圖表
+# ----------------------------------------------------
+def create_team_ranking_figure(df_team_standings):
+    fig = px.bar(
+        df_team_standings,
+        x='Team',
+        y='Total_Points',
+        text='Total_Points',
+        title='**車隊總積分排名 (Team Standings)**',
+        color='Team',
+        height=400
+    )
+    fig.update_traces(texttemplate='%{text}', textposition='outside')
+    fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide', title_font_size=20)
+    return fig
 # ... (省略 ranking_fig = create_ranking_figure(df_standings) 上方的程式碼)
+# --- A. 數據準備和圖表/表格創建 ---
+
+# 1. 獲取總積分排名數據 (Total Standings)
 df_standings = get_total_standings() 
 ranking_fig = create_ranking_figure(df_standings)
-# --- 新增的數據處理邏輯 (將長表轉換為寬表) ---
+
+# 1.1 獲取車隊總積分數據 (Team Standings) <--- NEW
+df_team_standings = get_team_standings()
+team_ranking_fig = create_team_ranking_figure(df_team_standings) # <--- NEW
+
+# 2. 獲取詳細單場數據 (Detailed Results)
 df_detailed = get_detailed_results()
 
 # 將 'Race_Type' 和 'Points/Position' 進行合併，以便進行樞紐分析
@@ -99,19 +151,39 @@ df_pivot = df_detailed.pivot_table(
 ).reset_index()
 
 # 調整欄位名稱，使其更清晰
-df_pivot.columns = ['Driver', 'Team'] + [f'{col[0]}_{col[1]}' for col in df_pivot.columns.tolist() if col[0] in ['Points', 'Position']]
+df_pivot.columns = ['Driver', 'Team'] + [f'{col[0]}_{col[1]}' for col in df_pivot.columns.tolist() if col[0] in ['Driver', 'Team', 'Points', 'Position'] and col[0] not in ['Driver', 'Team']]
 
-# 排序欄位以便顯示
-desired_cols = ['Driver', 'Team'] + sorted([col for col in df_pivot.columns if col not in ['Driver', 'Team']], key=lambda x: (x.split('_')[1], x.split('_')[0]))
+# 💡 NEW STEP: 合併車手總積分到詳細表格
+df_pivot_merged = pd.merge(
+    df_pivot,
+    df_standings[['Driver', 'Total_Points']],
+    on='Driver',
+    how='left'
+)
 
-df_final_table = df_pivot[desired_cols]
+# 排序欄位以便顯示，並將 'Total_Points' 放在 'Team' 後面
+desired_cols = ['Driver', 'Team', 'Total_Points'] + sorted([col for col in df_pivot_merged.columns if col not in ['Driver', 'Team', 'Total_Points']], key=lambda x: (x.split('_')[1], x.split('_')[0]))
+
+df_final_table = df_pivot_merged[desired_cols]
+
+# ... (其餘程式碼，例如 df_final_table 的欄位名稱替換等，保持不變)
 
 
 # --- 4. 重新定義網站佈局 (使用新的詳細表格) ---
 app.layout = html.Div(children=[
     html.H1(children='我們遊戲的 F1 總積分排名紀錄', style={'textAlign': 'center', 'color': '#FF1801', 'font-size': '36px'}),
     html.Div(children=f'資料來源: 已完成 {len(df_standings)} 位玩家的 1 場比賽', style={'textAlign': 'center', 'margin-bottom': '20px'}),
+    # ... (您的個人總積分圖表 (ranking-graph) 結束) ...
+
+    # 新增車隊總積分圖表 <--- NEW
+    html.Div(children=[
+        dcc.Graph(
+            id='team-ranking-graph',
+            figure=team_ranking_fig
+        )
+    ], style={'padding': '20px'}),
     
+    # ... (後續的詳細成績表 (dataTable) 保持不變) ...
     # 放置總積分圖表 (保持不變)
     dcc.Graph(
         id='total-ranking-graph',

@@ -60,6 +60,7 @@ def get_detailed_results():
     return df
 # --- 2. Dash 應用程式設定 ---
 app = dash.Dash(__name__)
+server = app.server
 
 # --- 3. 建立儀表板佈局 ---
 
@@ -132,4 +133,4 @@ app.layout = html.Div(children=[
 ])
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    pass

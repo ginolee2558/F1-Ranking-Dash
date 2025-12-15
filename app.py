@@ -279,7 +279,7 @@ df_final_table = df_pivot_merged[desired_cols]
 app.layout = html.Div(children=[
     html.H1(children='我們遊戲的 F1 總積分排名紀錄', style={'textAlign': 'center', 'color': '#FF1801', 'font-size': '36px'}),
     # 使用 len(df_detailed.Race_Name.unique()) 計算已完成的比賽場次
-    html.Div(children=f'資料來源: 已完成 {len(df_detailed.Race_Name.unique())} 場比賽', style={'textAlign': 'center', 'margin-bottom': '20px'}),
+    html.Div(children=f'資料來源: 已完成 {len(df_detailed.Race_Name.unique())} 個大獎賽（共 {len(df_detailed.Race_Type.unique())} 場比賽）', style={'textAlign': 'center', 'margin-bottom': '20px'}),
     
     # 新增車隊總積分圖表 
     html.Div(children=[

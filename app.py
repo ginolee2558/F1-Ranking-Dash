@@ -151,9 +151,11 @@ def get_driver(session, driver_name):
         raise ValueError(f"錯誤：找不到車手 {driver_name}")
     return driver
 
+# app.py 檔案中
+
 # 數據定義：將所有站點數據寫入此處
 race_data = [
-    # ---- 第二站：巴林衝刺賽 ----
+    # ---- 站點 1：巴林衝刺賽 ----
     {'name': '巴林衝刺賽', 'type': 'Sprint', 'date': date(2025, 3, 1), 
      'results': [
         {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 8, 'position': 1},
@@ -164,7 +166,7 @@ race_data = [
         {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 3, 'position': 6},
     ]},
     
-    # ---- 第二站：巴林正賽 ----
+    # ---- 站點 1：巴林正賽 ----
     {'name': '巴林正賽', 'type': 'Race', 'date': date(2025, 3, 2), 
      'results': [
         {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 25, 'position': 1},
@@ -173,9 +175,63 @@ race_data = [
         {'driver_name': 'henrythanks69', 'team': 'McLaren', 'points': 12, 'position': 4},
         {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 10, 'position': 5},
         {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 0, 'position': 10}, 
+    ]},
+
+    # ---- 站點 2：沙烏地阿拉伯衝刺賽 ----
+    {'name': '沙烏地阿拉伯衝刺賽', 'type': 'Sprint', 'date': date(2025, 3, 15), # 假設日期
+     'results': [
+        {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 8, 'position': 1},
+        {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 7, 'position': 2},
+        {'driver_name': 'RUUR', 'team': 'Mercedes', 'points': 6, 'position': 3},
+        {'driver_name': 'henrythanks69', 'team': 'McLaren', 'points': 5, 'position': 4},
+        {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 0, 'position': 10}, 
+        {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 0, 'position': 9},
+    ]},
+    
+    # ---- 站點 2：沙烏地阿拉伯正賽 ----
+    {'name': '沙烏地阿拉伯正賽', 'type': 'Race', 'date': date(2025, 3, 16), # 假設日期
+     'results': [
+        {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 25, 'position': 1},
+        {'driver_name': 'RUUR', 'team': 'Mercedes', 'points': 18, 'position': 2},
+        {'driver_name': 'henrythanks69', 'team': 'McLaren', 'points': 15, 'position': 3},
+        {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 12, 'position': 4},
+        {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 0, 'position': 9},
+        {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 0, 'position': 10},
     ]}
 ]
 
+# app.py 檔案中
+
+# ----------------------------------------------------
+# 6. 車手數據初始化 (確保車手存在)
+# ----------------------------------------------------
+def create_initial_drivers():
+    Session_temp = sessionmaker(bind=engine)
+    session = Session_temp()
+    
+    # 這是您所有的車手名單和車隊
+    initial_drivers = [
+        {'name': 'mimicethan', 'team': 'McLaren'},
+        {'name': 'henrythanks69', 'team': 'McLaren'},
+        {'name': 'RUUR', 'team': 'Mercedes'},
+        {'name': 'Lavender', 'team': 'Mercedes'},
+        {'name': 'Tulio', 'team': 'Red Bull'},
+        {'name': 'leegino2558', 'team': 'Red Bull'},
+    ]
+    
+    print("--- 正在檢查並創建車手數據 ---")
+    
+    for d in initial_drivers:
+        # 檢查車手是否已存在，如果不存在則新增
+        driver = session.query(Driver).filter_by(name=d['name']).first()
+        if not driver:
+            new_driver = Driver(name=d['name'], team=d['team'])
+            session.add(new_driver)
+            print(f"已創建車手: {d['name']} ({d['team']})")
+            
+    session.commit()
+    session.close()
+    print("--- 車手數據已確保存在於資料庫中 ---")
 def insert_all_race_data():
     Session_temp = sessionmaker(bind=engine)
     session = Session_temp()
@@ -224,6 +280,7 @@ def insert_all_race_data():
 # ====================================================================
 
 # 🚨 關鍵修正：在所有函數定義之後調用它！
+create_initial_drivers()
 insert_all_race_data() 
 # -----------------------------------------------------------------
 

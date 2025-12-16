@@ -13,7 +13,7 @@ from database_setup import Base, Race, Result, Driver
 
 TEAM_COLORS = {
     "McLaren": "orange",
-    "Red Bull": "#000093",
+    "Red Bull": "#000093", # 您的指定顏色
     "Mercedes": "cyan",
     # ... (其他顏色)
 }
@@ -60,7 +60,7 @@ def get_detailed_results():
         Driver.team.label('Team'),
         Race.name.label('Race_Name'),
         Race.type.label('Race_Type'),
-        Race.date.label('Race_Date'), # 🚨 修正: 確保 Race_Date 有返回 🚨
+        Race.date.label('Race_Date'), 
         Result.points.label('Points'),
         Result.position.label('Position')
     )
@@ -70,49 +70,45 @@ def get_detailed_results():
     .all())
     
     session.close()
-    # 🚨 修正: 確保 DataFrame 的欄位列表包含 Race_Date 🚨
     df = pd.DataFrame(detailed_data, columns=['Driver', 'Team', 'Race_Name', 'Race_Type', 'Race_Date', 'Points', 'Position'])
     return df
 
 # ----------------------------------------------------
-# 3. 繪製車手總積分圖表 (堆疊式)
+# 3. 繪製車手總積分圖表 (修正為非堆疊式 + 車隊顏色 + 高分在上)
 # ----------------------------------------------------
 def create_ranking_figure(df_detailed):
     """
-    從詳細成績 df_detailed 創建堆疊式直條圖，展示每位車手在不同賽事中的積分貢獻。
+    修正: 使用非堆疊式，並鎖定車隊顏色，按總積分排名。
     """
     df_standings = get_total_standings()
     driver_order = df_standings['Driver'].tolist()
-    race_order = df_detailed.sort_values('Race_Date')['Race_Name'].unique().tolist()
-
+    
     fig = px.bar(
-        df_detailed,
-        x='Points',          
+        df_standings, # 🚨 數據源切回 df_standings 繪製總分 🚨
+        x='Total_Points',      
         y='Driver',          
-        color='Race_Name',   # 依據比賽名稱進行顏色堆疊
-        title='**車手總積分排名 (按賽事貢獻分解)**',
+        color='Team',         # 🚨 修正: 依據車隊設定顏色 🚨
+        title='**車手總積分排名 (Driver Standings)**',
         orientation='h',     
-        text='Points',       
-        color_discrete_sequence=px.colors.qualitative.Bold, 
-        category_orders={'Driver': driver_order, 'Race_Name': race_order}, 
+        text='Total_Points',       
+        color_discrete_map=TEAM_COLORS, # 🚨 修正: 使用定義的車隊顏色 🚨
         height=600
     )
 
     fig.update_traces(
         texttemplate='%{text}', 
-        textposition='inside', 
-        hovertemplate="<br><b>%{y}</b><br>賽事: %{customdata[0]}<br>積分: %{x}<extra></extra>",
-        customdata=df_detailed[['Race_Name']]
+        textposition='outside', # 顯示在長條外部
+        hovertemplate="<b>%{y}</b><br>總積分: %{x}<extra></extra>" # 簡化懸浮提示
     )
     
     fig.update_layout(
         uniformtext_minsize=8,
         uniformtext_mode='hide',
         title_font_size=20,
+        # 🚨 修正: 確保積分高的排在上方 🚨
         yaxis={'categoryorder': 'array', 'categoryarray': driver_order},
         xaxis_title="總積分",
-        legend_title_text="賽事名稱 (Race Name)",
-        barmode='stack' # 確保使用堆疊模式
+        legend_title_text="車隊 (Team)"
     )
     
     return fig
@@ -137,64 +133,59 @@ def get_team_standings():
     return df_team_standings
 
 # ----------------------------------------------------
-# 5. 繪製車隊總積分排名圖表 (堆疊式)
+# 5. 繪製車隊總積分排名圖表 (修正為非堆疊式 + 車隊顏色 + 高分在上)
 # ----------------------------------------------------
 def create_team_ranking_figure(df_detailed):
     """
-    從詳細成績 df_detailed 創建堆疊式直條圖，
-    展示每支車隊在不同賽事中的積分貢獻。
+    修正: 使用非堆疊式，並鎖定車隊顏色，按總積分排名。
     """
-    # 1. 計算每支車隊在每場比賽的總積分
-    df_race_points = df_detailed.groupby(['Team', 'Race_Name', 'Race_Date'], as_index=False)['Points'].sum()
-    df_race_points.rename(columns={'Points': 'Race_Points'}, inplace=True)
-    
-    # 2. 獲取車隊總積分的排名順序
-    df_team_standings = get_team_standings()
+    df_team_standings = get_team_standings() # 獲取車隊總分和排序
     team_order = df_team_standings['Team'].tolist()
     
-    # 3. 確保 Race_Name 有明確的順序
-    race_order = df_race_points.sort_values('Race_Date')['Race_Name'].unique().tolist()
-    
-    # 4. 創建堆疊式長條圖
     fig = px.bar(
-        df_race_points,
-        x='Race_Points',       
+        df_team_standings, # 🚨 數據源切回 df_team_standings 繪製總分 🚨
+        x='Total_Points',       
         y='Team',              
-        color='Race_Name',     
-        title='**車隊總積分排名 (按賽事貢獻分解)**',
+        color='Team',          # 🚨 修正: 依據車隊設定顏色 🚨
+        title='**車隊總積分排名 (Team Standings)**',
         orientation='h',       
-        text='Race_Points',    
-        color_discrete_sequence=px.colors.qualitative.Pastel,
-        category_orders={'Team': team_order, 'Race_Name': race_order},
+        text='Total_Points',    
+        color_discrete_map=TEAM_COLORS, # 🚨 修正: 使用定義的車隊顏色 🚨
         height=400
     )
 
-    # 5. 配置圖表外觀
     fig.update_traces(
         texttemplate='%{text}', 
-        textposition='inside',
-        hovertemplate="<br><b>%{y}</b><br>賽事: %{customdata[0]}<br>積分: %{x}<extra></extra>",
-        customdata=df_race_points[['Race_Name']]
+        textposition='outside', # 顯示在長條外部
+        hovertemplate="<b>%{y}</b><br>總積分: %{x}<extra></extra>" # 簡化懸浮提示
     )
     
-    # 6. 設置 Y 軸排序
     fig.update_layout(
         uniformtext_minsize=8,
         uniformtext_mode='hide',
         title_font_size=20,
+        # 🚨 修正: 確保積分高的排在上方 🚨
         yaxis={'categoryorder': 'array', 'categoryarray': team_order},
         xaxis_title="總積分",
-        legend_title_text="賽事名稱 (Race Name)",
-        barmode='stack' # 確保使用堆疊模式
+        legend_title_text="車隊 (Team)"
     )
     
     return fig
+
+# ----------------------------------------------------
+# 輔助函數：提取 GP 名稱
+# ----------------------------------------------------
+def extract_gp_name(race_name):
+    if '衝刺賽' in race_name:
+        return race_name.split('衝刺賽')[0]
+    elif '正賽' in race_name:
+        return race_name.split('正賽')[0]
+    return race_name 
 
 # ====================================================================
 # C. 數據插入函數 (確保 Render 部署時有數據)
 # ====================================================================
 
-# 輔助函數：查找或創建比賽
 def find_or_create_race(session, race_name, race_type, race_date):
     race = session.query(Race).filter_by(name=race_name, type=race_type).first()
     if not race:
@@ -203,7 +194,6 @@ def find_or_create_race(session, race_name, race_type, race_date):
         session.commit()
     return race
 
-# 輔助函數：查找車手
 def get_driver(session, driver_name):
     driver = session.query(Driver).filter_by(name=driver_name).first()
     if not driver:
@@ -371,15 +361,6 @@ def insert_all_race_data():
 # 數據插入函數定義結束
 # ----------------------------------------------------
 
-# 輔助函數：提取 GP 名稱 (必須放在函數定義區塊)
-def extract_gp_name(race_name):
-    if '衝刺賽' in race_name:
-        return race_name.split('衝刺賽')[0]
-    elif '正賽' in race_name:
-        return race_name.split('正賽')[0]
-    return race_name 
-# ----------------------------------------------------
-
 
 # ====================================================================
 # D. 主體執行區塊：數據處理與佈局定義
@@ -407,10 +388,10 @@ df_detailed['GP_Name'] = df_detailed['Race_Name'].apply(extract_gp_name)
 # 修正後的總大獎賽場次 (4 個 GP)
 total_grand_prix_count = len(df_detailed['GP_Name'].unique())
 
-# 4. 創建圖表 (現在 df_detailed 已經定義，並準備好堆疊圖所需數據)
-ranking_fig = create_ranking_figure(df_detailed) # 車手堆疊圖
+# 4. 創建圖表 (現在 df_detailed 已經定義，使用 df_standings 繪製總分)
+ranking_fig = create_ranking_figure(df_detailed) # 車手總分圖
 
-# 5. 創建車隊總積分圖表 (傳入 df_detailed 製作堆疊圖)
+# 5. 創建車隊總積分圖表 (使用 df_detailed 繪製總分)
 team_ranking_fig = create_team_ranking_figure(df_detailed) 
 
 # --- 樞紐分析 (用於詳細表格) ---
@@ -449,7 +430,7 @@ app.layout = html.Div(children=[
     # 🚨 修正: 使用 total_grand_prix_count 和實際賽事數量 🚨
     html.Div(children=f'資料來源: 已完成 {total_grand_prix_count} 個大獎賽（共 {len(df_detailed.Race_Name.unique())} 場比賽）', style={'textAlign': 'center', 'margin-bottom': '20px'}),
     
-    # 新增車隊總積分圖表 (現為堆疊圖)
+    # 新增車隊總積分圖表 (現在是統一車隊顏色)
     html.Div(children=[
         dcc.Graph(
             id='team-ranking-graph',
@@ -457,7 +438,7 @@ app.layout = html.Div(children=[
         )
     ], style={'padding': '20px'}),
     
-    # 放置總積分圖表 (現為堆疊圖)
+    # 放置總積分圖表 (現在是統一車隊顏色)
     dcc.Graph(
         id='total-ranking-graph',
         figure=ranking_fig,
@@ -477,5 +458,7 @@ app.layout = html.Div(children=[
 ])
 
 if __name__ == '__main__':
-    # 運行網站 (本地調試)
+    # 網站啟動時運行 insert_all_race_data()
+    # 如果您想在本地調試，取消註釋下面一行：
+    # app.run_server(debug=True)
     pass

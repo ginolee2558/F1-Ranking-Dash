@@ -77,31 +77,39 @@ def get_detailed_results():
 # 3. 繪製車手總積分圖表 (修正為非堆疊式 + 車隊顏色 + 高分在上)
 # ----------------------------------------------------
 def create_ranking_figure(df_detailed):
-    # 取得排序基準
     df_standings = get_total_standings()
-    driver_order = df_standings['Driver'].tolist()
     
     fig = px.bar(
-        df_detailed, # 使用詳細資料才能堆疊分站
-        x='Points',      
-        y='Driver',      
-        color='Team',              
-        pattern_shape='Race_Name', # 區分分站
-        title='**車手積分組成分析**',
-        orientation='h', 
-        hover_data={'Points': True, 'Race_Name': True},
+        df_standings,
+        x='Total_Points',      
+        y='Driver',          
+        color='Team',         
+        title='**車手總積分排名 (Driver Standings)**',
+        orientation='h',     
+        text='Total_Points',       
         color_discrete_map=TEAM_COLORS,
         height=600
     )
 
-    fig.update_layout(
-        barmode='stack', 
-        yaxis={'categoryorder': 'array', 'categoryarray': driver_order[::-1]}, 
-        xaxis_title="累積總積分",
-        legend_title_text="車隊與分站圖案"
+    fig.update_traces(
+        texttemplate='%{text}', 
+        textposition='outside',
+        hovertemplate="<b>%{y}</b><br>總積分: %{x}<extra></extra>"
     )
-    fig.update_traces(texttemplate='%{x}', textposition='inside')
+    
+    fig.update_layout(
+        uniformtext_minsize=8,
+        uniformtext_mode='hide',
+        title_font_size=20,
+        # 🚨 關鍵修正：將 categoryorder 改為 'total ascending' 🚨
+        # 在橫向長條圖中，'total ascending' 會讓數值最大的顯示在最上方
+        yaxis={'categoryorder': 'total ascending'},
+        xaxis_title="總積分",
+        legend_title_text="車隊 (Team)"
+    )
+    
     return fig
+
 # ----------------------------------------------------
 # 4. 獲取車隊總積分 (用於排序基準)
 # ----------------------------------------------------
@@ -125,31 +133,36 @@ def get_team_standings():
 # 5. 繪製車隊總積分排名圖表 (修正為非堆疊式 + 車隊顏色 + 高分在上)
 # ----------------------------------------------------
 def create_team_ranking_figure(df_detailed):
-    # 取得車隊排序基準
-    df_team_standings = get_team_standings() 
-    team_order = df_team_standings['Team'].tolist()
+    df_team_standings = get_team_standings()
     
     fig = px.bar(
-        df_detailed, # 🚨 修正：這裡必須改用 df_detailed 🚨
-        x='Points',      # 堆疊每個點數
+        df_team_standings,
+        x='Total_Points',       
         y='Team',              
         color='Team',          
-        pattern_shape='Driver', # 🚨 現在可以抓到 Driver 欄位了 🚨
-        title='**車隊總積分組成 (依車手貢獻)**',
+        title='**車隊總積分排名 (Team Standings)**',
         orientation='h',       
+        text='Total_Points',    
         color_discrete_map=TEAM_COLORS,
         height=400
     )
 
-    fig.update_layout(
-        barmode='stack', 
-        yaxis={'categoryorder': 'array', 'categoryarray': team_order[::-1]}, 
-        xaxis_title="總積分",
-        legend_title_text="車隊與貢獻車手"
+    fig.update_traces(
+        texttemplate='%{text}', 
+        textposition='outside',
+        hovertemplate="<b>%{y}</b><br>總積分: %{x}<extra></extra>"
     )
     
-    # 顯示每塊堆疊的分數
-    fig.update_traces(texttemplate='%{x}', textposition='inside')
+    fig.update_layout(
+        uniformtext_minsize=8,
+        uniformtext_mode='hide',
+        title_font_size=20,
+        # 🚨 關鍵修正：同樣將 categoryorder 改為 'total ascending' 🚨
+        yaxis={'categoryorder': 'total ascending'},
+        xaxis_title="總積分",
+        legend_title_text="車隊 (Team)"
+    )
+    
     return fig
 
 # ----------------------------------------------------

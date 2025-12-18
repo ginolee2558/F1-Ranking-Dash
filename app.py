@@ -77,30 +77,47 @@ def get_detailed_results():
 # 3. 繪製車手總積分圖表 (修正為非堆疊式 + 車隊顏色 + 高分在上)
 # ----------------------------------------------------
 def create_ranking_figure(df_detailed):
-    # 取得排序基準
     df_standings = get_total_standings()
     driver_order = df_standings['Driver'].tolist()
     
+    # 建立基礎堆疊圖 (移除 pattern_shape)
     fig = px.bar(
-        df_detailed, # 使用詳細資料才能堆疊分站
+        df_detailed, 
         x='Points',      
         y='Driver',      
         color='Team',              
-        pattern_shape='Race_Name', # 區分分站
         title='**車手積分組成分析**',
         orientation='h', 
         hover_data={'Points': True, 'Race_Name': True},
         color_discrete_map=TEAM_COLORS,
-        height=600
+        height=600,
+        category_orders={"Driver": driver_order[::-1]} # 確保排序
     )
+
+    # 🚨 關鍵修改：添加總分標籤 🚨
+    # 我們在圖表上疊加一層專門顯示總分的文字
+    for i, row in df_standings.iterrows():
+        fig.add_annotation(
+            x=row['Total_Points'],
+            y=row['Driver'],
+            text=str(row['Total_Points']),
+            showarrow=False,
+            xanchor='left',
+            xshift=10, # 往右偏移一點點以免重疊
+            font=dict(size=14, color="black", family="Arial Black")
+        )
 
     fig.update_layout(
         barmode='stack', 
-        yaxis={'categoryorder': 'array', 'categoryarray': driver_order[::-1]}, 
         xaxis_title="累積總積分",
-        legend_title_text="車隊與分站圖案"
+        legend_title_text="車隊",
+        # 讓右邊留一點空間放數字
+        xaxis=dict(range=[0, df_standings['Total_Points'].max() * 1.15]) 
     )
-    fig.update_traces(texttemplate='%{x}', textposition='inside')
+    
+    # 內部分數顯示 (可選，若覺得太擠可以刪除此行)
+    fig.update_traces(texttemplate='%{x}', textposition='inside', insidetextanchor='middle')
+    
     return fig
 # ----------------------------------------------------
 # 4. 獲取車隊總積分 (用於排序基準)
@@ -125,31 +142,42 @@ def get_team_standings():
 # 5. 繪製車隊總積分排名圖表 (修正為非堆疊式 + 車隊顏色 + 高分在上)
 # ----------------------------------------------------
 def create_team_ranking_figure(df_detailed):
-    # 取得車隊排序基準
     df_team_standings = get_team_standings() 
     team_order = df_team_standings['Team'].tolist()
     
     fig = px.bar(
-        df_detailed, # 🚨 修正：這裡必須改用 df_detailed 🚨
-        x='Points',      # 堆疊每個點數
+        df_detailed, 
+        x='Points',      
         y='Team',              
         color='Team',          
-        pattern_shape='Driver', # 🚨 現在可以抓到 Driver 欄位了 🚨
-        title='**車隊總積分組成 (依車手貢獻)**',
+        title='**車隊總積分組成**',
         orientation='h',       
         color_discrete_map=TEAM_COLORS,
-        height=400
+        height=400,
+        category_orders={"Team": team_order[::-1]}
     )
+
+    # 🚨 關鍵修改：添加車隊總分標籤 🚨
+    for i, row in df_team_standings.iterrows():
+        fig.add_annotation(
+            x=row['Total_Points'],
+            y=row['Team'],
+            text=str(row['Total_Points']),
+            showarrow=False,
+            xanchor='left',
+            xshift=10,
+            font=dict(size=14, color="black", family="Arial Black")
+        )
 
     fig.update_layout(
         barmode='stack', 
-        yaxis={'categoryorder': 'array', 'categoryarray': team_order[::-1]}, 
         xaxis_title="總積分",
-        legend_title_text="車隊與貢獻車手"
+        legend_title_text="車隊",
+        xaxis=dict(range=[0, df_team_standings['Total_Points'].max() * 1.15])
     )
     
-    # 顯示每塊堆疊的分數
-    fig.update_traces(texttemplate='%{x}', textposition='inside')
+    fig.update_traces(texttemplate='%{x}', textposition='inside', insidetextanchor='middle')
+    
     return fig
 
 # ----------------------------------------------------

@@ -77,45 +77,56 @@ def get_detailed_results():
 # 3. 繪製車手總積分圖表 (修正為非堆疊式 + 車隊顏色 + 高分在上)
 # ----------------------------------------------------
 def create_ranking_figure(df_detailed):
+    """
+    1. 高分在上
+    2. 按比賽日期順序堆疊 (日本 -> 巴林 -> 沙烏地 -> ...)
+    3. 右側顯示總分標籤
+    """
+    # --- 步驟 A: 取得車手全局排序 (總分高的在上) ---
     df_standings = get_total_standings()
     driver_order = df_standings['Driver'].tolist()
     
-    # 建立基礎堆疊圖 (移除 pattern_shape)
+    # --- 步驟 B: 確保詳細資料是按日期排序 (這樣堆疊才會按時間先後) ---
+    # 假設 Race_Date 是日期格式，由舊到新排序
+    df_detailed = df_detailed.sort_values(by=['Driver', 'Race_Date'], ascending=[True, True])
+    
+    # --- 步驟 C: 繪圖 ---
     fig = px.bar(
         df_detailed, 
         x='Points',      
         y='Driver',      
         color='Team',              
-        title='**車手積分組成分析**',
+        title='**車手積分組成分析 (按比賽順序)**',
         orientation='h', 
-        hover_data={'Points': True, 'Race_Name': True},
+        # 懸浮資訊加入日期與分站名稱，方便檢查順序
+        hover_data={'Points': True, 'Race_Name': True, 'Race_Date': True},
         color_discrete_map=TEAM_COLORS,
         height=600,
-        category_orders={"Driver": driver_order[::-1]} # 確保排序
+        # 🚨 關鍵：手動指定 Y 軸順序 (Plotly 座標軸從下往上畫，所以要 reverse)
+        category_orders={"Driver": driver_order[::-1]} 
     )
 
-    # 🚨 關鍵修改：添加總分標籤 🚨
-    # 我們在圖表上疊加一層專門顯示總分的文字
+    # --- 步驟 D: 添加右側總分標籤 ---
     for i, row in df_standings.iterrows():
         fig.add_annotation(
             x=row['Total_Points'],
             y=row['Driver'],
-            text=str(row['Total_Points']),
+            text=f"<b>{row['Total_Points']}</b>", # 粗體總分
             showarrow=False,
             xanchor='left',
-            xshift=10, # 往右偏移一點點以免重疊
-            font=dict(size=14, color="black", family="Arial Black")
+            xshift=10,
+            font=dict(size=14, color="black")
         )
 
     fig.update_layout(
         barmode='stack', 
         xaxis_title="累積總積分",
         legend_title_text="車隊",
-        # 讓右邊留一點空間放數字
+        # 確保右側空間足夠放數字
         xaxis=dict(range=[0, df_standings['Total_Points'].max() * 1.15]) 
     )
     
-    # 內部分數顯示 (可選，若覺得太擠可以刪除此行)
+    # 內部分數顯示，並移除條紋圖案 (不設 pattern_shape 即可)
     fig.update_traces(texttemplate='%{x}', textposition='inside', insidetextanchor='middle')
     
     return fig
@@ -145,6 +156,9 @@ def create_team_ranking_figure(df_detailed):
     df_team_standings = get_team_standings() 
     team_order = df_team_standings['Team'].tolist()
     
+    # 車隊也依照日期排序堆疊
+    df_detailed = df_detailed.sort_values(by=['Team', 'Race_Date'], ascending=[True, True])
+    
     fig = px.bar(
         df_detailed, 
         x='Points',      
@@ -157,26 +171,25 @@ def create_team_ranking_figure(df_detailed):
         category_orders={"Team": team_order[::-1]}
     )
 
-    # 🚨 關鍵修改：添加車隊總分標籤 🚨
     for i, row in df_team_standings.iterrows():
         fig.add_annotation(
             x=row['Total_Points'],
             y=row['Team'],
-            text=str(row['Total_Points']),
+            text=f"<b>{row['Total_Points']}</b>",
             showarrow=False,
             xanchor='left',
             xshift=10,
-            font=dict(size=14, color="black", family="Arial Black")
+            font=dict(size=14, color="black")
         )
 
     fig.update_layout(
         barmode='stack', 
         xaxis_title="總積分",
         legend_title_text="車隊",
-        xaxis=dict(range=[0, df_team_standings['Total_Points'].max() * 1.15])
+        xaxis=dict(range=[0, df_team_standings['Total_Points'].max() * 1.1])
     )
     
-    fig.update_traces(texttemplate='%{x}', textposition='inside', insidetextanchor='middle')
+    fig.update_traces(texttemplate='%{x}', textposition='inside')
     
     return fig
 
@@ -210,8 +223,8 @@ def get_driver(session, driver_name):
 
 # 數據定義：將所有站點數據寫入此處 (保持不變)
 race_data = [
-    # ---- 站點 1：巴林衝刺賽 ----
-    {'name': '日本衝刺賽', 'type': 'Sprint', 'date': date(2025, 3, 1), 
+    # ---- 站點 1：日本賽 ----
+    {'name': '日本衝刺賽', 'type': 'Sprint', 'date': date(2025, 2 ,7 ),
      'results': [
         {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 8, 'position': 1},
         {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 0, 'position': 10},
@@ -221,8 +234,8 @@ race_data = [
         {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 0, 'position': 9},
     ]},
     
-    # ---- 站點 2：巴林正賽 ----
-    {'name': '日本正賽', 'type': 'Race', 'date': date(2025, 3, 2), 
+    # ---- 站點 2：日本 ----
+    {'name': '日本正賽', 'type': 'Race', 'date': date(2025, 2 ,9 ),
      'results': [
         {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 18, 'position': 2},
         {'driver_name': 'RUUR', 'team': 'Mercedes', 'points': 12, 'position': 4},

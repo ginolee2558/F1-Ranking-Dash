@@ -1,0 +1,5 @@
+git add .
+
+git commit -m "Update charts to stacked style with team colors and patterns"
+
+git push origin main

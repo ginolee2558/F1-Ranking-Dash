@@ -106,7 +106,7 @@ def create_ranking_figure(df_detailed):
         uniformtext_mode='hide',
         title_font_size=20,
         # 🚨 修正: 確保積分高的排在上方 🚨
-        yaxis={'categoryorder': 'array', 'categoryarray': driver_order},
+        yaxis={'categoryorder': 'total ascending'},
         xaxis_title="總積分",
         legend_title_text="車隊 (Team)"
     )
@@ -165,7 +165,7 @@ def create_team_ranking_figure(df_detailed):
         uniformtext_mode='hide',
         title_font_size=20,
         # 🚨 修正: 確保積分高的排在上方 🚨
-        yaxis={'categoryorder': 'array', 'categoryarray': team_order},
+        yaxis={'categoryorder': 'total ascending'},
         xaxis_title="總積分",
         legend_title_text="車隊 (Team)"
     )

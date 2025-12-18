@@ -203,6 +203,27 @@ def get_driver(session, driver_name):
 # 數據定義：將所有站點數據寫入此處 (保持不變)
 race_data = [
     # ---- 站點 1：巴林衝刺賽 ----
+    {'name': '日本衝刺賽', 'type': 'Sprint', 'date': date(2025, 3, 1), 
+     'results': [
+        {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 8, 'position': 1},
+        {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 0, 'position': 10},
+        {'driver_name': 'RUUR', 'team': 'Mercedes', 'points': 6, 'position': 3},
+        {'driver_name': 'henrythanks69', 'team': 'McLaren', 'points': 7, 'position': 2},
+        {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 5, 'position': 4},
+        {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 0, 'position': 9},
+    ]},
+    
+    # ---- 站點 2：巴林正賽 ----
+    {'name': '日本正賽', 'type': 'Race', 'date': date(2025, 3, 2), 
+     'results': [
+        {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 18, 'position': 2},
+        {'driver_name': 'RUUR', 'team': 'Mercedes', 'points': 12, 'position': 4},
+        {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 22, 'position': 1},
+        {'driver_name': 'henrythanks69', 'team': 'McLaren', 'points': 18, 'position': 3},
+        {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 0, 'position': 10},
+        {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 2, 'position': 9}, 
+    ]},
+    # ---- 站點 2：巴林衝刺賽 ----
     {'name': '巴林衝刺賽', 'type': 'Sprint', 'date': date(2025, 3, 1), 
      'results': [
         {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 8, 'position': 1},
@@ -213,7 +234,7 @@ race_data = [
         {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 3, 'position': 6},
     ]},
     
-    # ---- 站點 1：巴林正賽 ----
+    # ---- 站點 2：巴林正賽 ----
     {'name': '巴林正賽', 'type': 'Race', 'date': date(2025, 3, 2), 
      'results': [
         {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 25, 'position': 1},
@@ -224,7 +245,7 @@ race_data = [
         {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 0, 'position': 10}, 
     ]},
 
-    # ---- 站點 2：沙烏地阿拉伯衝刺賽 ----
+    # ---- 站點 3：沙烏地阿拉伯衝刺賽 ----
     {'name': '沙烏地阿拉伯衝刺賽', 'type': 'Sprint', 'date': date(2025, 3, 15), 
      'results': [
         {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 8, 'position': 1},
@@ -235,7 +256,7 @@ race_data = [
         {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 0, 'position': 9},
     ]},
     
-    # ---- 站點 2：沙烏地阿拉伯正賽 ----
+    # ---- 站點 3：沙烏地阿拉伯正賽 ----
     {'name': '沙烏地阿拉伯正賽', 'type': 'Race', 'date': date(2025, 3, 16), 
      'results': [
         {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 25, 'position': 1},
@@ -246,7 +267,7 @@ race_data = [
         {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 0, 'position': 10},
     ]},
 
-    # ---- 站點 3：伊莫拉衝刺賽 ----
+    # ---- 站點 4：伊莫拉衝刺賽 ----
     {'name': '伊莫拉衝刺賽', 'type': 'Sprint', 'date': date(2025, 4, 19), 
      'results': [
         {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 8, 'position': 1},
@@ -257,7 +278,7 @@ race_data = [
         {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 0, 'position': 10}, 
     ]},
 
-    # ---- 站點 3：伊莫拉正賽 ----
+    # ---- 站點 4：伊莫拉正賽 ----
     {'name': '伊莫拉正賽', 'type': 'Race', 'date': date(2025, 4, 20), 
      'results': [
         {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 25, 'position': 1},
@@ -268,7 +289,7 @@ race_data = [
         {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 1, 'position': 10},
     ]},
 
-    # ---- 站點 4：奧地利衝刺賽 ----
+    # ---- 站點 5：奧地利衝刺賽 ----
     {'name': '奧地利衝刺賽', 'type': 'Sprint', 'date': date(2025, 5, 10), 
      'results': [
         {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 8, 'position': 1},
@@ -279,7 +300,7 @@ race_data = [
         {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 0, 'position': 10},
     ]},
 
-    # ---- 站點 4：奧地利正賽 ----
+    # ---- 站點 5：奧地利正賽 ----
     {'name': '奧地利正賽', 'type': 'Race', 'date': date(2025, 5, 11), 
      'results': [
         {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 25, 'position': 1},

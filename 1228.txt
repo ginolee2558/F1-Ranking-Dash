@@ -79,14 +79,15 @@ def get_detailed_results():
 def create_ranking_figure(df_detailed):
     """
     1. 高分在上
-    2. 按比賽日期順序堆疊
+    2. 按比賽日期順序堆疊 (日本 -> 巴林 -> 沙烏地 -> ...)
     3. 右側顯示總分標籤
     """
-    # --- 步驟 A: 取得車手全局排序 (總分高的在前) ---
+    # --- 步驟 A: 取得車手全局排序 (總分高的在上) ---
     df_standings = get_total_standings()
     driver_order = df_standings['Driver'].tolist()
     
-    # --- 步驟 B: 確保詳細資料是按日期排序 ---
+    # --- 步驟 B: 確保詳細資料是按日期排序 (這樣堆疊才會按時間先後) ---
+    # 假設 Race_Date 是日期格式，由舊到新排序
     df_detailed = df_detailed.sort_values(by=['Driver', 'Race_Date'], ascending=[True, True])
     
     # --- 步驟 C: 繪圖 ---
@@ -97,12 +98,11 @@ def create_ranking_figure(df_detailed):
         color='Team',              
         title='**車手積分組成分析 (按比賽順序)**',
         orientation='h', 
+        # 懸浮資訊加入日期與分站名稱，方便檢查順序
         hover_data={'Points': True, 'Race_Name': True, 'Race_Date': True},
         color_discrete_map=TEAM_COLORS,
         height=600,
-        # 🚨 修正點：Plotly 從下往上畫，原本 driver_order 是 [高, 中, 低]
-        # 傳入 [高, 中, 低] 會讓「高」在最下面。所以我們需要它反轉成 [低, 中, 高]
-        # 這樣最高的「高」就會被畫在最上面。
+        # 🚨 關鍵：手動指定 Y 軸順序 (Plotly 座標軸從下往上畫，所以要 reverse)
         category_orders={"Driver": driver_order[::-1]} 
     )
 
@@ -111,7 +111,7 @@ def create_ranking_figure(df_detailed):
         fig.add_annotation(
             x=row['Total_Points'],
             y=row['Driver'],
-            text=f"<b>{row['Total_Points']}</b>", 
+            text=f"<b>{row['Total_Points']}</b>", # 粗體總分
             showarrow=False,
             xanchor='left',
             xshift=10,
@@ -122,9 +122,11 @@ def create_ranking_figure(df_detailed):
         barmode='stack', 
         xaxis_title="累積總積分",
         legend_title_text="車隊",
+        # 確保右側空間足夠放數字
         xaxis=dict(range=[0, df_standings['Total_Points'].max() * 1.15]) 
     )
     
+    # 內部分數顯示，並移除條紋圖案 (不設 pattern_shape 即可)
     fig.update_traces(texttemplate='%{x}', textposition='inside', insidetextanchor='middle')
     
     return fig
@@ -166,7 +168,6 @@ def create_team_ranking_figure(df_detailed):
         orientation='h',       
         color_discrete_map=TEAM_COLORS,
         height=400,
-        # 🚨 同理：反轉順序讓最高分在最上面 🚨
         category_orders={"Team": team_order[::-1]}
     )
 
@@ -191,6 +192,7 @@ def create_team_ranking_figure(df_detailed):
     fig.update_traces(texttemplate='%{x}', textposition='inside')
     
     return fig
+
 # ----------------------------------------------------
 # 輔助函數：提取 GP 名稱
 # ----------------------------------------------------

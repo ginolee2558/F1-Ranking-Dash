@@ -330,7 +330,30 @@ race_data = [
         {'driver_name': 'henrythanks69', 'team': 'McLaren', 'points': 12, 'position': 4},
         {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 10, 'position': 5},
         {'driver_name': 'RUUR', 'team': 'Mercedes', 'points': 0, 'position': 10},
-    ]}
+    ]},
+
+    # ---- 站點 5：英國大獎賽 ----
+    # 衝刺賽：名次穩健，前排無變動
+    {'name': '英國衝刺賽', 'type': 'Sprint', 'date': date(2025, 7, 5), 
+     'results': [
+        {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 8, 'position': 1},
+        {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 7, 'position': 2},
+        {'driver_name': 'RUUR', 'team': 'Mercedes', 'points': 6, 'position': 3},
+        {'driver_name': 'henrythanks69', 'team': 'McLaren', 'points': 5, 'position': 4},
+        {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 4, 'position': 5},
+        {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 1, 'position': 8}, 
+    ]},
+    
+    # 正賽：麥拉倫戰術大捷，HenryThanks69 奪冠
+    {'name': '英國正賽', 'type': 'Race', 'date': date(2025, 7, 6), 
+     'results': [
+        {'driver_name': 'henrythanks69', 'team': 'McLaren', 'points': 25, 'position': 1}, # 罰時後奪冠
+        {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 18, 'position': 2},    # 罰時後落至第二
+        {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 15, 'position': 3},  # 策略 Undercut 成功
+        {'driver_name': 'RUUR', 'team': 'Mercedes', 'points': 12, 'position': 4},       # 受困於髒空氣
+        {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 10, 'position': 5},    # 混亂生還
+        {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 8, 'position': 6},       # 多次進站苦追
+    ]},
 ]
 
 

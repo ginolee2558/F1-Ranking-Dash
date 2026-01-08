@@ -391,7 +391,7 @@ race_data = [
         {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 10, 'position': 5},
         {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 0, 'position': 9},
     ]},
-    # ---- 站點 7：匈牙利大獎賽 (Hungary) ----
+    # ---- 站點 8：匈牙利大獎賽 (Hungary) ----
     {'name': '匈牙利衝刺賽', 'type': 'Sprint', 'date': date(2026, 1, 8), 
      'results': [
         {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 8, 'position': 1},
@@ -410,6 +410,26 @@ race_data = [
         {'driver_name': 'henrythanks69', 'team': 'McLaren', 'points': 12, 'position': 4},
         {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 2, 'position': 9},
         {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 0, 'position': 10},
+    ]},
+    # ---- 站點 9：墨西哥大獎賽 (Mexico) ----
+    {'name': '墨西哥衝刺賽', 'type': 'Sprint', 'date': date(2026, 1, 8), 
+     'results': [
+        {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 8, 'position': 1},
+        {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 7, 'position': 2},
+        {'driver_name': 'RUUR', 'team': 'Mercedes', 'points': 6, 'position': 3},
+        {'driver_name': 'henrythanks69', 'team': 'McLaren', 'points': 5, 'position': 4},
+        {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 0, 'position': 9},
+        {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 0, 'position': 10},
+        
+    ]},
+    {'name': '墨西哥正賽', 'type': 'Race', 'date': date(2026, 1, 8), 
+     'results': [
+        {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 25, 'position': 1},
+        {'driver_name': 'RUUR', 'team': 'Mercedes', 'points': 18, 'position': 2},
+        {'driver_name': 'henrythanks69', 'team': 'McLaren', 'points': 15, 'position': 3},
+        {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 8, 'position': 6},
+        {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 0, 'position': 9},
+        {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 0, 'position': 10},
     ]},
 ]
 

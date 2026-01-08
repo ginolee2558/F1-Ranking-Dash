@@ -404,8 +404,8 @@ race_data = [
     ]},
     {'name': '匈牙利正賽', 'type': 'Race', 'date': date(2026, 1, 8), 
      'results': [
-        {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 25, 'position': 1},
-        {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 18, 'position': 2},
+        {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 25, 'position': 1},
+        {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 18, 'position': 2},
         {'driver_name': 'RUUR', 'team': 'Mercedes', 'points': 15, 'position': 3},
         {'driver_name': 'henrythanks69', 'team': 'McLaren', 'points': 12, 'position': 4},
         {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 2, 'position': 9},

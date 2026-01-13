@@ -431,6 +431,26 @@ race_data = [
         {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 0, 'position': 9},
         {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 0, 'position': 10},
     ]},
+    # ---- 站點 9：拉斯維加斯大獎賽 (Las Vegas) ----
+    {'name': '拉斯維加斯衝刺賽', 'type': 'Sprint', 'date': date(2026, 1, 13), 
+     'results': [
+        {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 8, 'position': 1},
+        {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 7, 'position': 2},
+        {'driver_name': 'henrythanks69', 'team': 'McLaren', 'points': 6, 'position': 3},
+        {'driver_name': 'RUUR', 'team': 'Mercedes', 'points': 5, 'position': 4},
+        {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 0, 'position': 9},
+        {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 0, 'position': 10},
+        
+    ]},
+    {'name': '拉斯維加斯正賽', 'type': 'Race', 'date': date(2026, 1, 13), 
+     'results': [
+        {'driver_name': 'mimicethan', 'team': 'McLaren', 'points': 25, 'position': 1},
+        {'driver_name': 'henrythanks69', 'team': 'McLaren', 'points': 18, 'position': 2},
+        {'driver_name': 'leegino2558', 'team': 'Red Bull', 'points': 15, 'position': 3},
+        {'driver_name': 'Lavender', 'team': 'Mercedes', 'points': 0, 'position': 8},
+        {'driver_name': 'RUUR', 'team': 'Mercedes', 'points': 0, 'position': 9},
+        {'driver_name': 'Tulio', 'team': 'Red Bull', 'points': 0, 'position': 10},
+    ]},
 ]
 
 
